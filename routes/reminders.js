@@ -11,15 +11,35 @@ const formatPhoneNumber = (phoneNumber) => {
   return phoneNumber;
 };
 
+const calculateAge = (birthDate) => {
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDifference = today.getMonth() - birth.getMonth();
+
+  // Adjust age if the birth date hasn't occurred yet this year
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birth.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+};
+
 router.post("/create", async (req, res) => {
   const {
     nik,
     nama,
     wa,
-    ttl,
-    usia,
+    tanggal_lahir,
     jenis_kelamin,
-    alamat,
+    kota,
+    kecamatan,
+    kelurahan,
+    rt,
+    rw,
     alat_kontrasepsi,
     tanggal_daftar,
   } = req.body;
@@ -31,10 +51,13 @@ router.post("/create", async (req, res) => {
       !nik ||
       !nama ||
       !wa ||
-      !ttl ||
-      !usia ||
+      !tanggal_lahir ||
       !jenis_kelamin ||
-      !alamat ||
+      !kota ||
+      !kecamatan ||
+      !kelurahan ||
+      !rt ||
+      !rw ||
       !alat_kontrasepsi ||
       !tanggal_daftar
     ) {
@@ -44,6 +67,8 @@ router.post("/create", async (req, res) => {
     if (isNaN(new Date(tanggal_daftar).getTime())) {
       return res.status(400).json({ message: "Format tanggal tidak valid." });
     }
+
+    const usia = calculateAge(tanggal_lahir);
 
     // Logika siklus berdasarkan alat kontrasepsi
     let durasi;
@@ -60,6 +85,8 @@ router.post("/create", async (req, res) => {
       .toISOString()
       .split("T")[0];
 
+
+
     // Kirim pesan pertama kali
     const pesanAwal = await client.messages.create({
       from: "whatsapp:+14155238886", // Nomor WhatsApp Twilio Sandbox
@@ -75,10 +102,14 @@ router.post("/create", async (req, res) => {
         nik,
         nama,
         wa: formattedWa,
-        ttl,
-        usia,
+        tanggal_lahir,
+        usia: usia,
         jenis_kelamin,
-        alamat,
+        kota,
+        kecamatan,
+        kelurahan,
+        rt,
+        rw,
         alat_kontrasepsi,
         tanggal_daftar,
         tanggal_berikutnya: formattedTanggalBerikutnya,

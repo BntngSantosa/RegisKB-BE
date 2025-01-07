@@ -1,4 +1,5 @@
 require("dotenv").config();
+require("./config/scheduler");
 const express = require("express");
 const remindersRoutes = require("./routes/reminders");
 const getReminderRoutes = require("./routes/getReminderById");

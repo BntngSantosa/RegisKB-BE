@@ -6,19 +6,33 @@ const router = express.Router();
 // Endpoint untuk memperbarui data pengingat berdasarkan NIK
 router.put("/reminder/:nik", async (req, res, next) => {
   const { nik } = req.params;
-  const { nama, wa, ttl, usia, jenis_kelamin, alamat, alat_kontrasepsi } =
-    req.body;
+  const {
+    nama,
+    wa,
+    tanggal_lahir,
+    jenis_kelamin,
+    kota,
+    kecamatan,
+    kelurahan,
+    rt,
+    rw,
+    alat_kontrasepsi,
+  } = req.body;
 
   try {
     const { data, error } = await supabase
       .from("kb_registration")
       .update({
+        nik,
         nama,
         wa,
-        ttl,
-        usia,
+        tanggal_lahir,
         jenis_kelamin,
-        alamat,
+        kota,
+        kecamatan,
+        kelurahan,
+        rt,
+        rw,
         alat_kontrasepsi,
       })
       .eq("nik", nik)

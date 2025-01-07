@@ -11,7 +11,7 @@ router.get("/reminder/:nik", async (req, res, next) => {
     const { data, error } = await supabase
       .from("kb_registration")
       .select(
-        "nik, nama, wa, ttl, usia, jenis_kelamin, alamat, alat_kontrasepsi, tanggal_daftar, tanggal_berikutnya"
+        "*"
       )
       .eq("nik", nik)
       .single();
